@@ -2,15 +2,23 @@
 const fs = require('fs');
 
 
-class SetBasicAuthEssentials {
+class SetupBasicAuthentication {
   constructor (serverless, options) {
+    this.consoleLog = serverless.cli.consoleLog;
     this.hooks = {
       'before:package:initialize': function () {
+        // add the basic authenticator function
         injectBasicAuthFunction(serverless);
+
+        // add our custom authenticator
         addAuthFileToPackage(serverless);
       },
-      'after:package:finalize': function () { removeFileFromPackage(serverless) },
+      'after:package:finalize': function () {
+        // remove the custom authenticator
+        removeFileFromPackage(serverless)
+      },
       'before:deploy:deploy': function() {
+        // configure api gateway to check for the right place for the key
         configureApiGatewayKeySource(serverless);
       }
     }
@@ -18,7 +26,7 @@ class SetBasicAuthEssentials {
 }
 
 function removeFileFromPackage(serverless) {
-  console.log('removing symlink')
+  this.consoleLog('Removing Symlink for Basic Authenticator');
   fs.unlinkSync(serverless.config.servicePath + "/auth.py")
 }
 
@@ -30,14 +38,13 @@ function addAuthFileToPackage(serverless) {
     serverless.package.include = []
   }
 
-  console.log('adding symlink')
+  this.consoleLog('Adding Symlink for Basic Authenticator');
   // @TODO: Make target filename randomized with something, to prevent overriding
   // any files
 
   // append our auth.py file to the package
   serverless.package.include.push(__dirname + "/auth.py")
   fs.symlinkSync(__dirname + "/auth.py", serverless.config.servicePath + "/auth.py")
-  console.log(serverless.package.include)
 }
 
 function injectBasicAuthFunction (serverless) {
@@ -68,6 +75,7 @@ function injectBasicAuthFunction (serverless) {
         fnctn.events[fnctn_event].http.authorizer == null
       ) {
         fnctn.events[fnctn_event].http.authorizer = 'basicAuthenticator'
+        this.consoleLog(yellow('Basic Authentication') + ' enabled for ' + function_name);
       }
     }
   }
@@ -76,10 +84,10 @@ function injectBasicAuthFunction (serverless) {
 function configureApiGatewayKeySource(serverless) {
   var template = serverless.service.provider.compiledCloudFormationTemplate;
   if(template.Resources.ApiGatewayRestApi != null) {
-    console.log('Setting Api Gateway to fetch api keys from authorizer')
+    this.consoleLog('Configuring Api Gateway for Basic Authenticator')
     template.Resources.ApiGatewayRestApi.Properties.ApiKeySourceType = 'AUTHORIZER'
   }
 }
 
 // now we need to make our plugin object available to the framework to execute
-module.exports = SetBasicAuthEssentials
+module.exports = SetupBasicAuthentication
