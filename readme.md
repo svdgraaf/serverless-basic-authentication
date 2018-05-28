@@ -1,9 +1,9 @@
 Serverless Basic Authentication (http basic auth)
 --------------------------------------------
 
-Sometimes you need to integrate your api with some outside system, and you are not capable of setting up custom headers with keys.
+Sometimes you need to integrate your api with some outside system, and you are not capable of setting up custom headers with keys. Almost all systems support Basic Authentication out of the box though. Which is where this plugin comes in.
 
-That is where this plugin comes in. This will install a custom authenticator for your specified functions, and use the AWS Api Gateway API Keys (so no user management required), as http basic username and password.
+This plugin will install a custom authenticator for the functions you specify as being private, and use the API Keys (so no user management required) as http basic username and password.
 
 Installation
 ------------
