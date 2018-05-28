@@ -43,15 +43,15 @@ functions:
           private: true
 ```
 
-After deploying, you can call the url like so:
+After deploying, you can call the endpoint with a basic auth username/password:
 
 ```
-curl -u foobar:[mykey] https://abckudzdef.execute-api.eu-west-1.amazonaws.com/dev/foo/bar
+curl -u [key-name]:[key-value] https://abckudzdef.execute-api.eu-west-1.amazonaws.com/dev/foo/bar
 "yay"
 ```
 
 How does this work?
 -------------------
-In Api Gateway, the custom authorized can also be used to supply the api key for a request. In this case, we lookup the api key on the fly through the api, and check if the key matches. If so, that key is used by Api Gateway for handling the calls.
+In Api Gateway, the custom authorizer function can also be used to supply the api key for a request. In this case, we lookup the api key on the fly through the api-gateway api, and check if the key matches. If so, we tell Api Gateway to use that key for handling the calls.
 
 PR's are appreciated!
