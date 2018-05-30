@@ -16,6 +16,19 @@ plugins:
   - serverless-basic-authentication
 ```
 
+And give access so that the plugin can check the api keys:
+```
+provider:
+  name: aws
+  ...
+  iamRoleStatements:
+    ...
+    - Effect: Allow
+      Action:
+        - apigateway:GET
+      Resource: "*"
+```
+
 Usage
 -----
 
