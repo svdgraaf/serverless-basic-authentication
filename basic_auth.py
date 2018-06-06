@@ -25,8 +25,12 @@ def basicAuth(event, context):
         print("Key value mismatch")
         raise Exception('Unauthorized!!')
 
-    # All is well, return a policy which allows this user to access
-    # this specific call
+    # All is well, return a policy which allows this user to access to this api
+    # this call is cached for all authenticated calls, so we need to give
+    # access to the whole api. This could be done by having a policyDocument
+    # for each available function, but I don't really care :)
+    arn = "%s/*" % '/'.join(event['methodArn'].split("/")[0:2])
+
     authResponse = {
         'principalId': username,
         'usageIdentifierKey': token,
@@ -35,9 +39,10 @@ def basicAuth(event, context):
             'Statement': [{
                 'Action': 'execute-api:Invoke',
                 'Effect': 'Allow',
-                'Resource': event['methodArn']
+                'Resource': arn
             }]
         }
     }
+    print("Authentication response: %s" % authResponse)
 
     return authResponse
