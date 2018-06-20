@@ -5,6 +5,8 @@ Sometimes you need to integrate your api with some outside system, and you are n
 
 This plugin will install a custom authenticator for the functions you specify as being private, and use the API Keys (so no user management required) as http basic username and password.
 
+When using this plugin, you can use both the `x-api-key` header, or the `Authorization` header for authentication.
+
 Installation
 ------------
 `npm install serverless-basic-authentication`
@@ -55,6 +57,8 @@ functions:
           method: get
           private: true
 ```
+
+**Note:** The plugin checks if a custom authorizer is already set. So if you provide a custom authorizer it will not override your custom authorizer.
 
 After deploying, you can call the endpoint with a basic auth username/password:
 
