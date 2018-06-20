@@ -83,7 +83,13 @@ function addAuthorizerFunctionToPrivateFunctions(serverless) {
         serverless.service.functions[function_name].events[fnctn_event].http.private == true &&
         serverless.service.functions[function_name].events[fnctn_event].http.authorizer == null
       ) {
-        serverless.service.functions[function_name].events[fnctn_event].http.authorizer = 'basicAuthenticator'
+        serverless.service.functions[function_name].events[fnctn_event].http.authorizer = {
+          name: 'basicAuthenticator',
+          identitySource: '', // this is only valid if we set cache ttl to 0
+          resultTtlInSeconds: 0,
+          type: 'REQUEST'
+
+        }
         serverless.cli.consoleLog('Basic Authentication: ' + chalk.yellow('Enabled for ' + function_name));
       }
     }
