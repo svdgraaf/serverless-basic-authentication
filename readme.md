@@ -45,7 +45,7 @@ provider:
     - platypus
 ```
 
-For each function which is marked as `private: true`, the custom authenticator will be inserted, like so:
+For each function that responds to `http` events and is marked as `private: true`, the custom authenticator will be inserted, like so:
 
 ```
 functions:
