@@ -80,6 +80,7 @@ function addAuthorizerFunctionToPrivateFunctions(serverless) {
     // also doesn't have a custom authorizer already, apply our authenticator
     for(let fnctn_event in fnctn['events']) {
       if(
+        serverless.service.functions[function_name].events[fnctn_event].http != null &&
         serverless.service.functions[function_name].events[fnctn_event].http.private == true &&
         serverless.service.functions[function_name].events[fnctn_event].http.authorizer == null
       ) {
