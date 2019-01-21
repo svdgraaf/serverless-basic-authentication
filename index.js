@@ -60,7 +60,7 @@ module.exports = class SetupBasicAuthentication {
   addAuthorizerFunctionToPrivateFunctions() {
     // for each function which is marked as 'private', set the basic authenticator
     // if it doesn't have a custom authenticator yet
-    Object.keys(this.serverless.service.functions).each((functionName) => {
+    Object.keys(this.serverless.service.functions).forEach((functionName) => {
       // ignore our own function
       if (functionName === 'basicAuthenticator') {
         return;
@@ -71,7 +71,7 @@ module.exports = class SetupBasicAuthentication {
 
       // check if any of the http events is marked as private, and if that event
       // also doesn't have a custom authorizer already, apply our authenticator
-      Object.keys(fnctn.events).each((fnctnEvent) => {
+      Object.keys(fnctn.events).forEach((fnctnEvent) => {
         if (
           this.serverless.service.functions[functionName].events[fnctnEvent].http != null
           && this.serverless.service.functions[functionName].events[fnctnEvent].http.private === true
