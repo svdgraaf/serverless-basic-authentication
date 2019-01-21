@@ -8,6 +8,7 @@ def basicAuth(event, context):
     # access to the whole api. This could be done by having a policyDocument
     # for each available function, but I don't really care :)
     arn = "%s/*" % "/".join(event["methodArn"].split("/")[0:2])
+
     # if a basic auth header is set, use that to find the correct user/token
     if "Authorization" in event["headers"]:
         authorizationHeader = event["headers"]["Authorization"]
