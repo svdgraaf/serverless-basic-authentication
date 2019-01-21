@@ -2,6 +2,9 @@
   "name": "serverless-basic-authentication",
   "version": "0.9.0",
   "devDependencies": {
+    "eslint": "^5.12.1",
+    "eslint-config-airbnb-base": "^13.1.0",
+    "eslint-plugin-import": "^2.14.0",
     "jest": "^22.4.3"
   },
   "license": "MIT",
