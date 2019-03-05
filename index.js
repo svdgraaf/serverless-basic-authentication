@@ -72,9 +72,8 @@ module.exports = class SetupBasicAuthentication {
       // check if any of the http events is marked as private, and if that event
       // also doesn't have a custom authorizer already, apply our authenticator
       Object.keys(fnctn.events).forEach((fnctnEvent) => {
-
         // if http doesn't exist, skip
-        if(!('http' in serverless.service.functions[function_name].events[fnctn_event])) {
+        if (!('http' in this.serverless.service.functions[functionName].events[fnctnEvent])) {
           return;
         }
 
