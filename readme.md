@@ -58,6 +58,32 @@ functions:
           private: true
 ```
 
+To send the correct header so that browsers will prompt for username and password, add a `GatewayResponse` to the `resources`:
+
+```
+resources:
+  Resources:
+    GatewayResponse:
+      Type: 'AWS::ApiGateway::GatewayResponse'
+      Properties:
+        ResponseParameters:
+          gatewayresponse.header.WWW-Authenticate: "'Basic'"
+        ResponseType: UNAUTHORIZED
+        RestApiId:
+          Ref: 'ApiGatewayRestApi'
+        StatusCode: '401'
+```
+
+If you are whitelisting files to be packaged, ensure you add `basic_auth.py` to the list otherwise the authorizer will fail:
+
+```
+package:
+  exclude:
+    - "./**/**"
+  include:
+    - basic_auth.py
+```
+
 **Note:** The plugin checks if a custom authorizer is already set. So if you provide a custom authorizer it will not override your custom authorizer.
 
 After deploying, you can call the endpoint with a basic auth username/password:
