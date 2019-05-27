@@ -10,8 +10,13 @@ def basicAuth(event, context):
     arn = "%s/*" % "/".join(event["methodArn"].split("/")[0:2])
 
     # if a basic auth header is set, use that to find the correct user/token
-    if "Authorization" in event["headers"]:
+    authorizationHeader = None
+    if 'Authorization' in event['headers']:
         authorizationHeader = event["headers"]["Authorization"]
+    if 'authorization' in event['headers']:
+        authorizationHeader = event["headers"]["authorization"]
+
+    if authorizationHeader:
         b64_token = authorizationHeader.split(" ")[-1]
 
         # decode the base64 encoded header value
