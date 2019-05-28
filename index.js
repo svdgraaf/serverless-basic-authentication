@@ -1,5 +1,6 @@
 const fs = require('fs');
 const chalk = require('chalk');
+const path = require('path');
 
 module.exports = class SetupBasicAuthentication {
   constructor(serverless, options) {
@@ -25,7 +26,7 @@ module.exports = class SetupBasicAuthentication {
 
   removeAuthorizer() {
     this.serverless.cli.consoleLog(`Basic Authentication: ${chalk.yellow('Removing Symlink for Basic Authenticator')}`);
-    fs.unlinkSync(`${this.serverless.config.servicePath}/basic_auth.py`);
+    fs.unlinkSync(path.normalize(`${this.serverless.config.servicePath}/basic_auth.py`));
   }
 
   addAuthFileToPackage() {
@@ -41,9 +42,17 @@ module.exports = class SetupBasicAuthentication {
     // @TODO: Make target filename randomized with something, to prevent overriding
     // any files
 
-    // append our auth.py file to the package
-    this.serverless.package.include.push(`${__dirname}/auth.py`);
-    fs.symlinkSync(`${__dirname}/basic_auth.py`, `${this.serverless.config.servicePath}/basic_auth.py`);
+    // append our basic_auth.py file to the package
+    this.serverless.package.include.push(path.normalize(`${__dirname}/basic_auth.py`));
+    try {
+      fs.symlinkSync(path.normalize(`${__dirname}/basic_auth.py`), path.normalize(`${this.serverless.config.servicePath}/basic_auth.py`));
+    } catch(error) {
+      if(error.errno == -4048 && error.code == 'EPERM'){
+        fs.copyFileSync(path.normalize(`${__dirname}/basic_auth.py`),path.normalize(`${this.serverless.config.servicePath}/basic_auth.py`));
+      }else{
+        throw error;
+      }
+    }
   }
 
   injectBasicAuthFunction() {
