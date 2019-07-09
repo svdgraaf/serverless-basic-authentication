@@ -45,11 +45,17 @@ module.exports = class SetupBasicAuthentication {
     // append our basic_auth.py file to the package
     this.serverless.package.include.push(path.normalize(`${__dirname}/basic_auth.py`));
     try {
-      fs.symlinkSync(path.normalize(`${__dirname}/basic_auth.py`), path.normalize(`${this.serverless.config.servicePath}/basic_auth.py`));
-    } catch(error) {
-      if(error.errno == -4048 && error.code == 'EPERM'){
-        fs.copyFileSync(path.normalize(`${__dirname}/basic_auth.py`),path.normalize(`${this.serverless.config.servicePath}/basic_auth.py`));
-      }else{
+      fs.symlinkSync(
+        path.normalize(`${__dirname}/basic_auth.py`),
+        path.normalize(`${this.serverless.config.servicePath}/basic_auth.py`)
+      );
+    } catch (error) {
+      if (error.errno === -4048 && error.code === 'EPERM') {
+        fs.copyFileSync(
+          path.normalize(`${__dirname}/basic_auth.py`),
+          path.normalize(`${this.serverless.config.servicePath}/basic_auth.py`)
+        );
+      } else {
         throw error;
       }
     }
