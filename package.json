@@ -1,6 +1,6 @@
 {
   "name": "serverless-basic-authentication",
-  "version": "0.14.0",
+  "version": "0.14.1",
   "devDependencies": {
     "eslint": "^5.16.0",
     "eslint-config-airbnb-base": "^13.2.0",
