@@ -58,6 +58,26 @@ functions:
           private: true
 ```
 
+For more fine-grained control over which functions are enabled for basic auth, use the `basicAuth` attribute on events. If any of the functions' events is marked with the flag `basicAuth`, then only the events with `basicAuth=true` are configured with basic auth.
+
+```
+functions:
+  foo:
+    handler: handler.foo
+    events:
+      - http:
+          path: foo
+          method: get
+          basicAuth: true     # Basic auth enabled
+  bar:
+    handler: handler.bar
+    events:
+      - http:
+          path: bar
+          method: get
+          private: true       # Basic auth not enabled (may use some other default authorizer)
+```
+
 To send the correct header so that browsers will prompt for username and password, add a `GatewayResponse` to the `resources`:
 
 ```

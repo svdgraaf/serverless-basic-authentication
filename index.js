@@ -73,31 +73,46 @@ module.exports = class SetupBasicAuthentication {
   }
 
   addAuthorizerFunctionToPrivateFunctions() {
-    // for each function which is marked as 'private', set the basic authenticator
-    // if it doesn't have a custom authenticator yet
-    Object.keys(this.serverless.service.functions).forEach((functionName) => {
+    // For each function which is marked as 'private', set the basic authenticator
+    // if it doesn't have a custom authenticator yet.
+
+    // If any of the functions' events is marked with the flag "basicAuth", then
+    // only the events with basicAuth=true are configured with basic auth.
+
+    const functions = this.serverless.service.functions || [];
+
+    const hasAnyBasicAuthConfig = Object.keys(functions).reduce(
+      (result, func) => result || Object.keys(func.events || []).reduce(
+        (hasBasicAuthConfig, event) => hasBasicAuthConfig || (event.http && 'basicAuth' in event.http),
+      false),
+    false);
+
+    Object.keys(functions).forEach((functionName) => {
       // ignore our own function
       if (functionName === 'basicAuthenticator') {
         return;
       }
 
       // get all function configs
-      const fnctn = this.serverless.service.functions[functionName];
+      const fnctn = functions[functionName];
 
       // check if any of the http events is marked as private, and if that event
       // also doesn't have a custom authorizer already, apply our authenticator
       Object.keys(fnctn.events).forEach((fnctnEvent) => {
         // if http doesn't exist, skip
-        if (!('http' in this.serverless.service.functions[functionName].events[fnctnEvent])) {
+        if (!fnctn.events[fnctnEvent].http) {
           return;
         }
 
         if (
-          this.serverless.service.functions[functionName].events[fnctnEvent].http != null
-          && this.serverless.service.functions[functionName].events[fnctnEvent].http.private === true
-          && this.serverless.service.functions[functionName].events[fnctnEvent].http.authorizer == null
+          !fnctn.events[fnctnEvent].http.authorizer &&
+          (
+            fnctn.events[fnctnEvent].http.private === true ||
+            !hasAnyBasicAuthConfig ||
+            fnctn.events[fnctnEvent].http.basicAuth === true
+          )
         ) {
-          this.serverless.service.functions[functionName].events[fnctnEvent].http.authorizer = {
+          fnctn.events[fnctnEvent].http.authorizer = {
             name: 'basicAuthenticator',
             identitySource: '', // this is only valid if we set cache ttl to 0
             resultTtlInSeconds: 0,
